@@ -1,0 +1,124 @@
+Entity:
+  package com.prodapt.SpringBootBasics.Entity;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+@Entity
+@Table(name="shops")
+
+
+public class ElectronicShop {
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	int id;
+	String component;
+	int price;
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
+	public String getComponent() {
+		return component;
+	}
+	public void setComponent(String component) {
+		this.component = component;
+	}
+	public int getPrice() {
+		return price;
+	}
+	public void setPrice(int price) {
+		this.price = price;
+	}
+	@Override
+	public String toString() {
+		return "ElectronicShop [id=" + id + ", component=" + component + ", price=" + price + "]";
+	}
+	public ElectronicShop(int id, String component, int price) {
+		super();
+		this.id = id;
+		this.component = component;
+		this.price = price;
+	}
+	public ElectronicShop() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+}
+
+
+Controller:
+
+package com.prodapt.SpringBootBasics.Controller;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.prodapt.SpringBootBasics.Entity.ElectronicShop;
+import com.prodapt.SpringBootBasics.Repository.ElectronicShopRepository;
+
+@RestController
+@CrossOrigin
+
+public class ElectronicShopController {
+		@Autowired
+	private ElectronicShopRepository electronicShopRepository;
+// get all employees
+	@GetMapping("/getelectronics")
+	public List<ElectronicShop> getAllelectronics(){
+		return electronicShopRepository.findAll();
+	}
+	@PostMapping("/addelectronics")
+	public ElectronicShop addelectronics(@RequestBody ElectronicShop electronics) {
+		return electronicShopRepository.save(electronics);
+				}
+	//delete operation
+	@DeleteMapping("/deleteelectronics/{id}")
+	public void deleteelectronics(@PathVariable("id") int id) {
+	System.out.println("Record deleted");
+	electronicShopRepository.deleteById(id);
+	}
+	@GetMapping("/check/{price}/{component}")
+	public String customercheck(@PathVariable("price") int price,@PathVariable("component") int component ) {
+	List<ElectronicShop> ar = electronicShopRepository.findAll();
+	ArrayList al = new ArrayList<ElectronicShop>(ar);
+	for(ElectronicShop c: ar) {
+	if(c.getPrice()==price) {
+	return "offer to product";
+	}
+	}
+	return "no offer to product";
+	}
+	}
+
+
+Repository:
+
+package com.prodapt.SpringBootBasics.Repository;
+
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import com.prodapt.SpringBootBasics.Entity.ElectronicShop;
+@Repository
+public interface ElectronicShopRepository extends JpaRepository<ElectronicShop, Integer>{
+}
+
+
+
+
